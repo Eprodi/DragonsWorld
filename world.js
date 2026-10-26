@@ -189,6 +189,52 @@
   }
   [[-6.3,-2.8,1.1],[-6.2,0.4,.78],[-5.2,2.8,1],[-2.5,3.7,.72],[0.1,3.5,.83],[5.9,2.7,1.05],[6.4,0.0,.8],[5.8,-3.0,.95],[1.9,-3.5,.72],[-1.9,-3.6,.83]].forEach(([x,z,s],i)=>makeTree(x,z,s,`island-1-tree-${i}`));
 
+  // Maciços de arbustos e folhagem dão à ilha a aparência de jardim habitado.
+  // São decoração permanente; árvores e pedras continuam sendo os alvos de limpeza.
+  const bushMats = ['#3e9857', '#58ad5e', '#76bd5d', '#91c96b'].map(color => mat(color, 0.9));
+  const bushSpots = [
+    [-5.5,-2.2],[-4.7,-2.8],[-4.9,-0.9],[-5.4,1.5],[-4.5,2.9],[-3.2,3.4],
+    [-1.6,3.8],[-0.5,3.25],[1.1,3.45],[2.2,3.1],[4.2,3.1],[5.2,2.3],
+    [5.4,1.1],[6.0,-0.9],[5.0,-2.4],[4.2,-3.0],[2.8,-3.35],[0.8,-3.6],
+    [-2.8,-3.1],[-4.3,-2.4],[-3.8,1.8],[3.8,1.7]
+  ];
+  bushSpots.forEach(([x, z], index) => {
+    const bush = new THREE.Group();
+    bush.position.set(x, 1.48, z);
+    const size = 0.28 + (index % 3) * 0.06;
+    for (let i = 0; i < 4; i++) {
+      const leaf = new THREE.Mesh(new THREE.IcosahedronGeometry(size * (i === 0 ? 1.15 : 0.82), 1), bushMats[(index + i) % bushMats.length]);
+      leaf.position.set((i % 2 ? 1 : -1) * size * 0.48, size * (i === 0 ? 0.15 : 0.5), (i < 2 ? -1 : 1) * size * 0.42);
+      leaf.scale.set(1.15, 0.86, 1);
+      leaf.castShadow = true;
+      bush.add(leaf);
+    }
+    island.add(bush);
+  });
+
+  // Pequenos canteiros coloridos reforçam a leitura das áreas de habitat.
+  const flowerBeds = [
+    [-4.55,-1.65,'#ff8fab'],[-4.15,2.25,'#f6d568'],[-2.3,2.8,'#c895ff'],
+    [0.2,2.75,'#ff9f72'],[2.55,2.8,'#f7dc70'],[4.45,1.5,'#f69ac7'],
+    [4.45,-1.8,'#c394f3'],[2.75,-2.75,'#ff9b77'],[-1.25,-2.95,'#e6a3ff'],[-3.65,0.95,'#ffe184']
+  ];
+  flowerBeds.forEach(([x, z, color], index) => {
+    const bed = new THREE.Group();
+    bed.position.set(x, 1.51, z);
+    for (let i = 0; i < 5; i++) {
+      const angle = (i / 5) * Math.PI * 2;
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.028, 0.22, 5), mat('#438b4b'));
+      stem.position.set(Math.cos(angle) * 0.22, 0.11, Math.sin(angle) * 0.16);
+      bed.add(stem);
+      const bloom = new THREE.Mesh(new THREE.SphereGeometry(0.095, 10, 8), mat(color, 0.5, { emissive: color, emissiveIntensity: 0.09 }));
+      bloom.position.set(Math.cos(angle) * 0.22, 0.24, Math.sin(angle) * 0.16);
+      bed.add(bloom);
+    }
+    const centerBloom = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), mat(index % 2 ? '#f7d977' : '#fff0c8'));
+    centerBloom.position.y = 0.25;
+    bed.add(centerBloom);
+    island.add(bed);
+  });
   // Flores luminosas e arbustos ao redor dos caminhos.
   for (let i = 0; i < 36; i++) {
     const angle = Math.random() * Math.PI * 2;
