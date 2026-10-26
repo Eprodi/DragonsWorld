@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#122a44">
-  <title>Dragon Isles — Santuário dos Dragões</title>
+  <title>Dragons World — Santuário dos Dragões</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="game-shell">
     <header class="topbar">
-      <a class="brand" href="#" aria-label="Dragon Isles início"><span class="brand-mark">✦</span><span>DRAGON <b>ISLES</b></span></a>
+      <a class="brand" href="#" aria-label="Dragons World início"><span class="brand-mark">✦</span><span>DRAGONS <b>WORLD</b></span></a>
       <div class="resources" aria-label="Recursos">
         <div class="resource"><span>🪙</span><strong id="coins">120</strong></div>
         <div class="resource"><span>🍓</span><strong id="food">8</strong></div>
@@ -19,8 +19,9 @@
     </header>
 
     <section class="island" aria-label="Seu santuário">
-      <div class="island-title"><span>SEU SANTUÁRIO</span><h1>Ilha do Começo</h1></div>
-      <canvas id="world-canvas" class="world-canvas" aria-label="Ilha flutuante 3D. Arraste para girar a câmera e use a roda do mouse para aproximar."></canvas>
+      <div class="island-title"><span>SEU SANTUÁRIO · ILHA <b id="island-number">1</b></span><h1 id="island-name">Ilha do Começo</h1></div>
+      <button class="clear-mode" id="clear-mode-btn" aria-pressed="false">⛏️ Limpar terreno</button>
+      <canvas id="world-canvas" class="world-canvas" aria-label="Ilha flutuante 3D. Ative Limpar terreno e toque nas árvores e pedras. Arraste para girar a câmera."></canvas>
       <div class="dragon-tag"><span class="tag-dot"></span><div><strong id="dragon-name">Luma</strong><small id="dragon-detail">Dragão de Fogo · Nv. 1</small></div><span class="mood" id="mood">☺</span></div>
       <div class="island-footer"><span>☀️ Dia tranquilo</span><span id="status">Luma está feliz em ver você!</span></div>
     </section>
@@ -28,7 +29,7 @@
     <section class="actions" aria-label="Ações do jogo">
       <button class="action-card primary" id="feed-btn"><span class="action-icon">🍓</span><span class="action-copy"><strong>Alimentar</strong><small id="feed-hint">Ganha experiência e moedas</small></span><span class="action-arrow">›</span></button>
       <button class="action-card" id="collect-btn"><span class="action-icon coin-icon">🪙</span><span class="action-copy"><strong>Coletar moedas</strong><small>Renda do habitat</small></span><span class="action-arrow">›</span></button>
-      <button class="action-card" id="egg-btn"><span class="action-icon">🥚</span><span class="action-copy"><strong>Chocar ovo</strong><small>50 moedas · elemento surpresa</small></span><span class="action-arrow">›</span></button>
+      <button class="action-card" id="egg-btn"><span class="action-icon">🏝️</span><span class="action-copy"><strong>Comprar ilha</strong><small id="island-price">250 moedas · nova área</small></span><span class="action-arrow">›</span></button>
       <button class="action-card" id="food-btn"><span class="action-icon">🧺</span><span class="action-copy"><strong>Comprar frutas</strong><small>5 frutas por 25 moedas</small></span><span class="action-arrow">›</span></button>
     </section>
 
@@ -50,10 +51,3 @@
   <script src="world.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-

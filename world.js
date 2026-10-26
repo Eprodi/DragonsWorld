@@ -48,6 +48,15 @@
   const grassLight = mat('#9bd36a');
   const stoneMats = ['#d4c69c', '#c8b98e', '#e1d1a6'].map(color => mat(color));
   const island = new THREE.Group();
+  const obstacleObjects = new Map();
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  function tagObstacle(group, id, kind, cost, xp) {
+    group.userData.obstacle = { id, kind, cost, xp };
+    group.traverse(child => { if (child.isMesh) child.userData.obstacleId = id; });
+    obstacleObjects.set(id, group);
+    return group;
+  }
   scene.add(island);
 
   // Camada rochosa suspensa, com uma ponta irregular voltada para baixo.
@@ -89,6 +98,7 @@
     pebble.scale.set(1.2, 0.8, 0.9);
     pebble.rotation.set(Math.random(), Math.random(), Math.random());
     pebble.castShadow = true;
+    tagObstacle(pebble, `island-1-rock-${i}`, 'rock', 25, 14);
     island.add(pebble);
   }
 
@@ -158,7 +168,7 @@
     }
   }
 
-  function makeTree(x, z, scale = 1) {
+  function makeTree(x, z, scale = 1, id = null) {
     const tree = new THREE.Group();
     tree.position.set(x, 1.35, z);
     tree.scale.setScalar(scale);
@@ -174,9 +184,10 @@
       crown.castShadow = true;
       tree.add(crown);
     }
+    if (id) tagObstacle(tree, id, 'tree', 15, 8);
     island.add(tree);
   }
-  [[-6.3,-2.8,1.1],[-6.2,0.4,.78],[-5.2,2.8,1],[-2.5,3.7,.72],[0.1,3.5,.83],[5.9,2.7,1.05],[6.4,0.0,.8],[5.8,-3.0,.95],[1.9,-3.5,.72],[-1.9,-3.6,.83]].forEach(([x,z,s])=>makeTree(x,z,s));
+  [[-6.3,-2.8,1.1],[-6.2,0.4,.78],[-5.2,2.8,1],[-2.5,3.7,.72],[0.1,3.5,.83],[5.9,2.7,1.05],[6.4,0.0,.8],[5.8,-3.0,.95],[1.9,-3.5,.72],[-1.9,-3.6,.83]].forEach(([x,z,s],i)=>makeTree(x,z,s,`island-1-tree-${i}`));
 
   // Flores luminosas e arbustos ao redor dos caminhos.
   for (let i = 0; i < 36; i++) {
@@ -305,6 +316,7 @@
     const element = data?.element || 'fire';
     const habitat = habitats[element] || habitats.fire;
     currentDragon = createDragon(element);
+    currentDragon.name = 'active-dragon';
     currentDragon.position.set(habitat.point[0], 1.76, habitat.point[1]);
     currentDragon.scale.setScalar(0.95);
     island.add(currentDragon);
@@ -318,11 +330,47 @@
   const firstDragon = Array.isArray(saved.dragons) ? saved.dragons.find(d => d.id === saved.selectedDragon) || saved.dragons[0] : null;
   showDragon(firstDragon || { element: 'fire' });
 
+  window.addEventListener('world:island-purchased', event => {
+    const number = event.detail.number;
+    const hadDragon = currentDragon && currentDragon.parent === island;
+    if (hadDragon) island.remove(currentDragon);
+    const expanded = island.clone(true);
+    if (hadDragon) island.add(currentDragon);
+    expanded.position.set(number % 2 ? 7 : -7, -3.6, -7);
+    expanded.scale.setScalar(0.48);
+    expanded.name = `island-${number}`;
+
+    expanded.traverse(node => {
+      if (!node.userData.obstacle) return;
+      const old = node.userData.obstacle;
+      const id = old.id.replace('island-1-', `island-${number}-`);
+      node.userData.obstacle = { ...old, id };
+      node.traverse(child => { if (child.isMesh) child.userData.obstacleId = id; });
+      obstacleObjects.set(id, node);
+    });
+    scene.add(expanded);
+    try {
+      const saved = JSON.parse(localStorage.getItem('dragon-isles-save') || '{}');
+      for (const id of saved.cleared || []) { const object=obstacleObjects.get(id); if(object){object.parent?.remove(object);obstacleObjects.delete(id);} }
+    } catch {}
+    target.set(expanded.position.x, expanded.position.y + .2, expanded.position.z);
+    radius = 20;
+    placeCamera();
+  });
+  window.addEventListener('world:remove-obstacle', event => {
+    const object = obstacleObjects.get(event.detail.id);
+    if (object) { object.parent?.remove(object); obstacleObjects.delete(event.detail.id); }
+  });
+  try {
+    for (let n = 2; n <= Number(saved.islands || 1); n++) window.dispatchEvent(new CustomEvent('world:island-purchased', { detail: { number: n } }));
+  } catch {}
   let dragging = false;
   let lastX = 0;
   let lastY = 0;
+  let pointerStartX = 0;
+  let pointerStartY = 0;
   canvas.addEventListener('pointerdown', event => {
-    dragging = true; lastX = event.clientX; lastY = event.clientY;
+    dragging = true; lastX = event.clientX; lastY = event.clientY; pointerStartX = event.clientX; pointerStartY = event.clientY;
     canvas.setPointerCapture(event.pointerId);
   });
   canvas.addEventListener('pointermove', event => {
@@ -332,7 +380,20 @@
     lastX = event.clientX; lastY = event.clientY;
     placeCamera();
   });
-  canvas.addEventListener('pointerup', () => { dragging = false; });
+  canvas.addEventListener('pointerup', event => {
+    dragging = false;
+    if (Math.hypot(event.clientX-pointerStartX,event.clientY-pointerStartY)>7 || !document.querySelector('.island').classList.contains('cleanup-active')) return;
+    const rect=canvas.getBoundingClientRect();
+    pointer.x=((event.clientX-rect.left)/rect.width)*2-1; pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
+    raycaster.setFromCamera(pointer,camera);
+    const hits=raycaster.intersectObjects(scene.children,true);
+    for(const hit of hits){
+      let object=hit.object;
+      while(object && !object.userData.obstacleId) object=object.parent;
+      const obstacle=object && obstacleObjects.get(object.userData.obstacleId)?.userData.obstacle;
+      if(obstacle){window.dispatchEvent(new CustomEvent('world:clear-obstacle',{detail:obstacle}));break;}
+    }
+  });
   canvas.addEventListener('pointercancel', () => { dragging = false; });
   canvas.addEventListener('wheel', event => {
     event.preventDefault();
@@ -351,6 +412,10 @@
   const observer = new ResizeObserver(resize);
   observer.observe(canvas.parentElement);
   resize();
+  try {
+    const saved = JSON.parse(localStorage.getItem('dragon-isles-save') || '{}');
+    for (const id of saved.cleared || []) { const object = obstacleObjects.get(id); if (object) { object.parent?.remove(object); obstacleObjects.delete(id); } }
+  } catch {}
 
   const clock = new THREE.Clock();
   function animate() {
