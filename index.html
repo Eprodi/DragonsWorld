@@ -14,7 +14,7 @@
       <div class="resources" aria-label="Recursos">
         <div class="resource"><span>🪙</span><strong id="coins">120</strong></div>
         <div class="resource"><span>🍓</span><strong id="food">8</strong></div>
-        <div class="level"><span>NV</span><strong>1</strong></div>
+        <div class="level"><span>NV</span><strong id="player-level">1</strong></div>
       </div>
     </header>
 
@@ -36,20 +36,26 @@
         </div>
         <div class="spark spark-a">✦</div><div class="spark spark-b">✧</div>
       </div>
-      <div class="dragon-tag"><span class="tag-dot"></span><div><strong id="dragon-name">Luma</strong><small>Dragão de Brasa · Nv. 1</small></div><span class="mood" id="mood">☺</span></div>
+      <div class="dragon-tag"><span class="tag-dot"></span><div><strong id="dragon-name">Luma</strong><small id="dragon-detail">Dragão de Fogo · Nv. 1</small></div><span class="mood" id="mood">☺</span></div>
       <div class="island-footer"><span>☀️ Dia tranquilo</span><span id="status">Luma está feliz em ver você!</span></div>
     </section>
 
     <section class="actions" aria-label="Ações do jogo">
-      <button class="action-card primary" id="feed-btn"><span class="action-icon">🍓</span><span class="action-copy"><strong>Alimentar</strong><small>Deixe Luma mais forte</small></span><span class="action-arrow">›</span></button>
+      <button class="action-card primary" id="feed-btn"><span class="action-icon">🍓</span><span class="action-copy"><strong>Alimentar</strong><small id="feed-hint">Ganha experiência e moedas</small></span><span class="action-arrow">›</span></button>
       <button class="action-card" id="collect-btn"><span class="action-icon coin-icon">🪙</span><span class="action-copy"><strong>Coletar moedas</strong><small>Renda do habitat</small></span><span class="action-arrow">›</span></button>
-      <button class="action-card" id="egg-btn"><span class="action-icon">🥚</span><span class="action-copy"><strong id="egg-label">Chocar ovo</strong><small>Uma nova descoberta</small></span><span class="action-arrow">›</span></button>
+      <button class="action-card" id="egg-btn"><span class="action-icon">🥚</span><span class="action-copy"><strong>Chocar ovo</strong><small>50 moedas · elemento surpresa</small></span><span class="action-arrow">›</span></button>
+      <button class="action-card" id="food-btn"><span class="action-icon">🧺</span><span class="action-copy"><strong>Comprar frutas</strong><small>5 frutas por 25 moedas</small></span><span class="action-arrow">›</span></button>
     </section>
 
+    <section class="collection" id="collection" aria-label="Coleção de dragões">
+      <div class="collection-heading"><div><span>SUA COLEÇÃO</span><h2>Dragões</h2></div><strong id="dragon-count">1 dragão</strong></div>
+      <div class="element-legend" aria-label="Elementos disponíveis"><span class="element-chip fire">🔥 Fogo</span><span class="element-chip water">💧 Água</span><span class="element-chip earth">🌱 Terra</span><span class="element-chip air">🌬️ Ar</span></div>
+      <div class="dragon-list" id="dragon-list"></div>
+    </section>
     <nav class="bottom-nav" aria-label="Navegação">
       <a class="nav-item active" href="#"><span>🏝️</span><small>Ilhas</small></a>
       <a class="nav-item" href="#collection"><span>🐉</span><small>Dragões</small></a>
-      <a class="nav-item" href="#market"><span>🛍️</span><small>Mercado</small></a>
+      <a class="nav-item" href="#food-btn"><span>🛍️</span><small>Mercado</small></a>
       <a class="nav-item" href="#quests"><span>📜</span><small>Missões</small></a>
     </nav>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -57,3 +63,6 @@
   <script src="game.js"></script>
 </body>
 </html>
+
+
+
