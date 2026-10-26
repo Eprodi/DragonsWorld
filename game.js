@@ -45,6 +45,7 @@ function render() {
     const selected = item.id === dragon.id;
     return `<button class="dragon-card ${selected ? 'selected' : ''}" data-dragon-id="${item.id}" aria-pressed="${selected}"><span class="dragon-card-emoji">${itemElement.emoji}</span><span class="dragon-card-copy"><strong>${item.name}</strong><small>${itemElement.label} · Nv. ${item.level}</small></span><span class="dragon-card-xp">${item.xp}/${XP_TO_LEVEL} XP</span></button>`;
   }).join('');
+  window.dispatchEvent(new CustomEvent('dragon:change', { detail: dragon }));
 }
 function toast(message) {
   const toastEl = byId('toast');
@@ -102,3 +103,4 @@ byId('dragon-list').addEventListener('click', event => {
   byId('status').textContent = `${dragon.name} está no habitat!`;
 });
 render();
+
