@@ -96,6 +96,17 @@ window.addEventListener('world:clear-obstacle', event => {
   const message = `${kind === 'tree' ? 'Árvore' : 'Pedra'} removida! -${cost} moedas · +${xp} XP.`;
   byId('status').textContent = message; toast(message);
 });
+byId('close-collection').addEventListener('click', () => byId('collection').classList.remove('open'));
+byId('bottom-nav').addEventListener('click', event => {
+  const item = event.target.closest('.nav-item');
+  if (!item) return;
+  event.preventDefault();
+  document.querySelectorAll('.nav-item').forEach(nav => nav.classList.toggle('active', nav === item));
+  if (item.hash === '#collection') { byId('collection').classList.toggle('open'); return; }
+  byId('collection').classList.remove('open');
+  if (item.hash === '#food-btn') { byId('status').textContent = 'Mercado: compre frutas no painel da ilha.'; toast('Escolha comprar frutas para continuar.'); }
+  else if (item.hash === '#quests') { toast('As missões ainda serão adicionadas.'); }
+});
 byId('dragon-list').addEventListener('click', event => {
   const card = event.target.closest('[data-dragon-id]'); if (!card) return;
   state.selectedDragon = card.dataset.dragonId; save(); render();
