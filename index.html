@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#122a44">
+  <title>Dragon Isles — Santuário dos Dragões</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Dragon Isles início"><span class="brand-mark">✦</span><span>DRAGON <b>ISLES</b></span></a>
+      <div class="resources" aria-label="Recursos">
+        <div class="resource"><span>🪙</span><strong id="coins">120</strong></div>
+        <div class="resource"><span>🍓</span><strong id="food">8</strong></div>
+        <div class="level"><span>NV</span><strong>1</strong></div>
+      </div>
+    </header>
+
+    <section class="island" aria-label="Seu santuário">
+      <div class="sky-glow"></div>
+      <div class="sun"></div>
+      <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+      <div class="island-title"><span>SEU SANTUÁRIO</span><h1>Ilha do Começo</h1></div>
+      <div class="island-art" aria-hidden="true">
+        <div class="island-back"></div><div class="island-ground"></div>
+        <div class="mountain mountain-one"></div><div class="mountain mountain-two"></div>
+        <div class="tree tree-one">♠</div><div class="tree tree-two">♠</div><div class="tree tree-three">♠</div>
+        <div class="habitat"><div class="habitat-ring"></div><div class="habitat-sign">🌿 HABITAT</div></div>
+        <div class="dragon" id="dragon" role="img" aria-label="Luma, sua dragão de brasa">
+          <div class="dragon-shadow"></div><div class="tail"></div><div class="wing wing-back"></div>
+          <div class="body"></div><div class="belly"></div><div class="wing wing-front"></div>
+          <div class="spikes">◆ ◆ ◆</div><div class="head"><div class="horn horn-left"></div><div class="horn horn-right"></div><div class="eye"></div><div class="snout"></div></div>
+          <div class="leg leg-left"></div><div class="leg leg-right"></div>
+        </div>
+        <div class="spark spark-a">✦</div><div class="spark spark-b">✧</div>
+      </div>
+      <div class="dragon-tag"><span class="tag-dot"></span><div><strong id="dragon-name">Luma</strong><small>Dragão de Brasa · Nv. 1</small></div><span class="mood" id="mood">☺</span></div>
+      <div class="island-footer"><span>☀️ Dia tranquilo</span><span id="status">Luma está feliz em ver você!</span></div>
+    </section>
+
+    <section class="actions" aria-label="Ações do jogo">
+      <button class="action-card primary" id="feed-btn"><span class="action-icon">🍓</span><span class="action-copy"><strong>Alimentar</strong><small>Deixe Luma mais forte</small></span><span class="action-arrow">›</span></button>
+      <button class="action-card" id="collect-btn"><span class="action-icon coin-icon">🪙</span><span class="action-copy"><strong>Coletar moedas</strong><small>Renda do habitat</small></span><span class="action-arrow">›</span></button>
+      <button class="action-card" id="egg-btn"><span class="action-icon">🥚</span><span class="action-copy"><strong id="egg-label">Chocar ovo</strong><small>Uma nova descoberta</small></span><span class="action-arrow">›</span></button>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Navegação">
+      <a class="nav-item active" href="#"><span>🏝️</span><small>Ilhas</small></a>
+      <a class="nav-item" href="#collection"><span>🐉</span><small>Dragões</small></a>
+      <a class="nav-item" href="#market"><span>🛍️</span><small>Mercado</small></a>
+      <a class="nav-item" href="#quests"><span>📜</span><small>Missões</small></a>
+    </nav>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
